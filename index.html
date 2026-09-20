@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TexnoBozor — Kompyuter texnikasi marketi</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stars"><canvas id="starsC"></canvas></div>
+
+<header>
+  <div class="wrap">
+    <nav class="nav">
+      <a class="logo" href="#" onclick="goCat('all');return false;">
+        <span class="lg-badge">TB</span>
+        <span>Texno<em>Bozor</em></span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a data-cat="all" class="on" onclick="goCat('all')">Barchasi</a>
+        <a data-cat="kompyuter" onclick="goCat('kompyuter')">Kompyuterlar</a>
+        <a data-cat="noutbuk" onclick="goCat('noutbuk')">Noutbuklar</a>
+        <a data-cat="monitor" onclick="goCat('monitor')">Monitorlar</a>
+        <a data-cat="komponent" onclick="goCat('komponent')">Komponentlar</a>
+        <a data-cat="aksessuar" onclick="goCat('aksessuar')">Aksessuarlar</a>
+      </div>
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchInp" type="text" placeholder="Mahsulot qidirish..." autocomplete="off">
+      </div>
+      <button class="iconbtn" id="themeBtn" title="Rejimni almashtirish"><span data-icon="sun"></span></button>
+      <button class="iconbtn" id="musicBtn" title="Sayt musiqasi"><span data-icon="note"></span><span class="eqbars"><i></i><i></i><i></i></span></button>
+      <button class="iconbtn" id="adminBtn" title="Boshqaruv" onclick="location.href='admin.html'"><span data-icon="lock"></span></button>
+      <button class="iconbtn" id="cartBtn" title="Savat"><span data-icon="bag"></span><b class="cart-count hide" id="cartCount">0</b></button>
+      <button class="iconbtn burger" id="burgerBtn"><span data-icon="menu"></span></button>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu">
+      <a data-cat="all" onclick="goCat('all')">Barchasi</a>
+      <a data-cat="kompyuter" onclick="goCat('kompyuter')">Kompyuterlar</a>
+      <a data-cat="noutbuk" onclick="goCat('noutbuk')">Noutbuklar</a>
+      <a data-cat="monitor" onclick="goCat('monitor')">Monitorlar</a>
+      <a data-cat="komponent" onclick="goCat('komponent')">Komponentlar</a>
+      <a data-cat="aksessuar" onclick="goCat('aksessuar')">Aksessuarlar</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="hero"></section>
+
+<div class="ticker"><div class="ticker-in" id="tickerIn"></div></div>
+
+<section class="features rv">
+  <div class="wrap feat-grid">
+    <div class="feat"><span class="fic" data-icon="truck"></span><div><b>Tezkor dostavka</b><small>Toshkent bo'ylab 1 kunda</small></div></div>
+    <div class="feat"><span class="fic" data-icon="shield"></span><div><b>12 oy kafolat</b><small>Rasmiy kafolat varaqasi</small></div></div>
+    <div class="feat"><span class="fic" data-icon="card"></span><div><b>Muddatli to'lov</b><small>0% ustama, 12 oygacha</small></div></div>
+    <div class="feat"><span class="fic" data-icon="wrench"></span><div><b>Servis markazi</b><small>Bepul diagnostika</small></div></div>
+  </div>
+</section>
+
+<section class="block rv" id="dealsSec">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-title">
+        <h2>Chegirmalar 🔥</h2>
+        <p>Kunlik aksiya narxlari — tugashiga qoldi: <b id="cdTimer" style="color:var(--bad)">--:--:--</b></p>
+      </div>
+    </div>
+    <div class="deals-row" id="dealsRow"></div>
+  </div>
+</section>
+
+<section class="block" id="catalog">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-title">
+        <h2>Mahsulotlar katalogi</h2>
+        <p>48+ mahsulot — kompyuterdan eng kichik detalagacha</p>
+      </div>
+      <a class="sec-link" href="#catalog">Yuqoriga <span data-icon="chevR"></span></a>
+    </div>
+    <div class="chip-row" id="chipRow"></div>
+    <div class="toolbar">
+      <select id="sortSel">
+        <option value="default">Saralash: Standart</option>
+        <option value="asc">Narx: arzondan qimmatga</option>
+        <option value="desc">Narx: qimmatdan arzonga</option>
+        <option value="name">Nom bo'yicha A-Z</option>
+      </select>
+      <span class="res-info" id="resInfo"></span>
+    </div>
+    <div class="grid" id="prodGrid"></div>
+  </div>
+</section>
+
+<section class="services rv">
+  <div class="wrap">
+    <div class="sec-head"><div class="sec-title"><h2>Xizmatlar</h2><p>Sizga to'liq xizmat ko'rsatamiz</p></div></div>
+    <div class="srv-grid">
+      <div class="srv"><span class="sic" data-icon="truck"></span><b>Dostavka</b><p>O'zbekiston bo'ylab barcha viloyatlarga yetkazib beramiz. Toshkent shahri — bepul.</p></div>
+      <div class="srv"><span class="sic" data-icon="shield"></span><b>Kafolat</b><p>Barcha texnika rasmiy 12 oylik kafolat bilan. Almashtirish 14 kun ichida.</p></div>
+      <div class="srv"><span class="sic" data-icon="card"></span><b>Muddatli to'lov</b><p>Pasport bilan 0% ustamada 12 oygacha bo'lib to'lash imkoni.</p></div>
+      <div class="srv"><span class="sic" data-icon="wrench"></span><b>Servis va ta'mir</b><p>Sertifikatli ustaxonа. Diagnostika mutlaqo bepul, ta'mir 1-3 kun.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="contact rv" id="contact">
+  <div class="wrap ct-grid">
+    <div class="ct-card">
+      <a class="ct-line" href="tel:+998900110813"><span class="cic" data-icon="phone"></span><div><b>+998 90 011 08 13</b><small>Dush-Shan: 9:00 — 20:00 • Bepul konsultatsiya</small></div></a>
+      <a class="ct-line" href="https://yandex.uz/maps/?text=Yangiyo'l+shahri+Toshkent+viloyati" target="_blank"><span class="cic" data-icon="pin"></span><div><b>Toshkent viloyati, Yangiyo'l shahri</b><small>"TexnoBozor" savdo nuqtasi — xaritada ko'rish</small></div></a>
+      <div class="ct-line"><span class="cic" data-icon="clock"></span><div><b>Onlayn 24/7</b><small>Saytdan istalgan vaqtda buyurtma bering</small></div></div>
+      <div class="ct-line"><span class="cic" data-icon="send"></span><div><b>Ariza yuboring</b><small>Formani to'ldiring — mutaxassisimiz o'zi qo'ng'iroq qiladi</small></div></div>
+    </div>
+    <form class="ct-card" id="contactForm">
+      <h3 style="font-size:20px;font-weight:800;margin-bottom:4px">Bepul konsultatsiya</h3>
+      <p style="color:var(--muted);font-size:13.5px;margin-bottom:16px">Raqamingizni qoldiring — mutaxassis 10 daqiqada qo'ng'iroq qiladi.</p>
+      <div class="fg" style="margin-bottom:12px"><label>Ismingiz <b>*</b></label><input required id="cfName" placeholder="Masalan: Jasur"></div>
+      <div class="fg" style="margin-bottom:12px"><label>Telefon raqam <b>*</b></label><input required id="cfPhone" placeholder="+998 __ ___ __ __" maxlength="17"></div>
+      <div class="fg" style="margin-bottom:18px"><label>Savolingiz</label><textarea id="cfMsg" rows="3" placeholder="Qanday mahsulot qidiryapsiz?"></textarea></div>
+      <button type="submit" class="btn btn-pri wide"><span data-icon="send"></span> Yuborish</button>
+      <button type="button" class="btn wide" id="checkReplyBtn" style="margin-top:10px"><span data-icon="search"></span> Mutaxassis javobini tekshirish</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap ft-grid">
+    <div class="ft-col ft-about">
+      <a class="logo" href="#"><span class="lg-badge">TB</span><span>Texno<em>Bozor</em></span></a>
+      <p>Kompyuter texnikasi va komponentlarning eng katta onlayn bozori. Rasmiy kafolat, tezkor dostavka, muddatli to'lov.</p>
+      <div class="socials">
+        <a href="#" title="Telegram"><span data-icon="send"></span></a>
+        <a href="#" title="Instagram"><span data-icon="insta"></span></a>
+        <a href="#" title="Telefon"><span data-icon="phone"></span></a>
+      </div>
+    </div>
+    <div class="ft-col">
+      <h4>Katalog</h4>
+      <a onclick="goCat('kompyuter')">Kompyuterlar</a>
+      <a onclick="goCat('noutbuk')">Noutbuklar</a>
+      <a onclick="goCat('monitor')">Monitorlar</a>
+      <a onclick="goCat('komponent')">Komponentlar</a>
+      <a onclick="goCat('aksessuar')">Aksessuarlar</a>
+    </div>
+    <div class="ft-col">
+      <h4>Kompaniya</h4>
+      <a href="#dealsSec">Chegirmalar</a>
+      <a href="#contact">Bog'lanish</a>
+      <a href="admin.html" target="_blank">Admin panel</a>
+    </div>
+    <div class="ft-col">
+      <h4>To'lov turlari</h4>
+      <div class="pay-pills"><span class="pp-tag">Naqd</span><span class="pp-tag">UzCard</span><span class="pp-tag">Humo</span><span class="pp-tag">Visa</span><span class="pp-tag">Payme</span><span class="pp-tag">Click</span><span class="pp-tag">Muddatli</span></div>
+    </div>
+  </div>
+  <div class="wrap copy"><span>© 2026 TexnoBozor. Barcha huquqlar himoyalangan.</span><span>Toshkent • O'zbekiston</span></div>
+</footer>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="cartDrawer">
+  <div class="dr-head"><h3><span data-icon="bag"></span> Savatingiz</h3><button class="xbtn" id="drawerX"><span data-icon="x"></span></button></div>
+  <div class="dr-items" id="drItems"></div>
+  <div class="dr-foot">
+    <div class="total-row"><span>Jami:</span><span id="drTotal">0 so'm</span></div>
+    <button class="btn btn-pri wide" id="checkoutBtn"><span data-icon="card"></span> Buyurtma berish</button>
+  </div>
+</aside>
+
+<div class="overlay" id="qvOverlay">
+  <div class="modal" id="qvModal"></div>
+</div>
+
+<div class="overlay" id="coOverlay">
+  <div class="modal sm" style="text-align:left;width:min(620px,100%)">
+    <button class="xbtn m-x" id="coX"><span data-icon="x"></span></button>
+    <h3 style="font-size:22px;font-weight:830;letter-spacing:-.4px">Buyurtmani rasmiylashtirish</h3>
+    <p style="color:var(--muted);font-size:13.5px;margin-top:4px">Ma'lumotlaringizni kiriting — operator tez orada tasdiqlaydi.</p>
+    <form id="coForm">
+      <div class="form-grid">
+        <div class="fg"><label>Ism <b>*</b></label><input name="name" required placeholder="Jasur"></div>
+        <div class="fg"><label>Familiya <b>*</b></label><input name="surname" required placeholder="Karimov"></div>
+        <div class="fg full"><label>Telefon raqam <b>*</b></label><input name="phone" id="coPhone" required placeholder="+998 __ ___ __ __" maxlength="17"></div>
+        <div class="fg full"><label>Viloyat <b>*</b></label><select name="region" id="coRegion" required></select></div>
+        <div class="fg full"><label>Manzil / Mo'ljal</label><input name="address" placeholder="Tuman, mahalla, uy..."></div>
+        <div class="fg full"><label>To'lov usuli <b>*</b></label>
+          <div class="pay-row" id="payRow">
+            <label class="pay-pill sel"><input type="radio" name="pay" value="Naqd" checked>Naqd pul</label>
+            <label class="pay-pill"><input type="radio" name="pay" value="Karta">Karta (UzCard/Humo)</label>
+            <label class="pay-pill"><input type="radio" name="pay" value="Muddatli">Muddatli to'lov</label>
+          </div>
+        </div>
+      </div>
+      <div class="total-row" style="margin-top:20px;padding-top:16px;border-top:1px dashed var(--border)"><span>To'lov summasi:</span><span id="coTotal">0 so'm</span></div>
+      <button type="submit" class="btn btn-pri wide" style="margin-top:4px"><span data-icon="check"></span> Buyurtmani tasdiqlash</button>
+    </form>
+  </div>
+</div>
+
+<div class="overlay" id="okOverlay">
+  <div class="modal sm">
+    <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h3 style="font-size:23px;font-weight:830">Buyurtma qabul qilindi! 🎉</h3>
+    <p style="color:var(--muted);font-size:14px;margin-top:6px">Buyurtma raqamingiz:</p>
+    <div class="ok-id" id="okId">—</div>
+    <p style="color:var(--muted);font-size:13.5px">Operatorimiz tez orada qo'ng'iroq qilib tasdiqlaydi.<br>Jami to'lov: <b id="okTotal" style="color:var(--text)">—</b></p>
+    <button class="btn btn-pri wide" id="okBtn" style="margin-top:20px">Davom etish</button>
+  </div>
+</div>
+
+<div class="overlay" id="leadOkOverlay">
+  <div class="modal sm">
+    <div class="check-circle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h3 style="font-size:23px;font-weight:830">Arizangiz qabul qilindi!</h3>
+    <p style="color:var(--muted);font-size:14px;margin-top:6px">Mutaxassis javobini ko'rish uchun shu kodni saqlab qo'ying:</p>
+    <div class="ok-id" id="leadCode">—</div>
+    <p style="color:var(--muted);font-size:13.5px">Keyin "Mutaxassis javobini tekshirish" tugmasi orqali<br>telefon raqam + shu kod bilan javobni o'qishingiz mumkin.</p>
+    <button class="btn btn-pri wide" id="leadOkBtn" style="margin-top:20px">Tushundim</button>
+  </div>
+</div>
+
+<div class="overlay" id="lcOverlay">
+  <div class="modal sm" style="text-align:left;width:min(540px,100%)">
+    <h3 style="font-size:20px;font-weight:830;margin-bottom:4px">Mutaxassis javobi</h3>
+    <p style="color:var(--muted);font-size:13.5px;margin-bottom:14px">Ariza yuborgan telefon raqamingiz va kodni kiriting.</p>
+    <div class="fg" style="margin-bottom:12px"><label>Telefon raqam</label><input id="lcPhone" placeholder="+998 __ ___ __ __" maxlength="17"></div>
+    <div class="fg" style="margin-bottom:16px"><label>Javob kodi (4 raqam)</label><input id="lcCode" placeholder="Masalan: 4821" maxlength="4" inputmode="numeric"></div>
+    <button class="btn btn-pri wide" id="lcBtn"><span data-icon="search"></span> Javobni ko'rsatish</button>
+    <button class="btn wide" id="lcClose" style="margin-top:10px">Yopish</button>
+    <div id="lcResult" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="data.js"></script>
+<script src="imgs.js"></script>
+<script src="db.js"></script>
+<script src="music.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
