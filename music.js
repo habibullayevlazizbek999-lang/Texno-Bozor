@@ -153,7 +153,7 @@ function toggleMusic(){
 const MUSX={
   tracks:TRACKS,
   cur:getSel,
-  set(id){localStorage.setItem("tb_track",id);},
+  set(id){localStorage.setItem("tb_track",id);if(typeof settingSet==="function")settingSet("track",id);},
   playingId:null,
   preview(id){
     if(this.playingId===id){this.stopPreview();return;}

@@ -273,7 +273,7 @@ function quickView(id){
     if(!nm){toast("Ismingizni yozing!",true);return;}
     if(!txt){toast("Sharh yozing!",true);return;}
     const rv={id:"u"+Date.now(),pid:p.id,name:nm,r:rate,t:txt,date:Date.now(),user:true};
-    await reviewPut(rv);
+    await reviewAdd(rv);
     REVMAP[p.id]=(REVMAP[p.id]||[]).concat([rv]);
     toast("Sharh qo'shildi ✓");
     const nr=productReviews(p,REVMAP);
@@ -345,7 +345,8 @@ function initCheckoutForm(){
       status:"Yangi"
     };
     try{
-      await orderPut(order);
+      const res=await placeOrder(order);
+      order.id=res.id;order.total=res.total;
       CART={};saveCart();renderCart();
       $("#coOverlay").classList.remove("show");
       $("#okId").textContent=order.id;
@@ -404,7 +405,7 @@ function bindEvents(){
     e.preventDefault();
     const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
     const code=String(Math.floor(1000+Math.random()*9000));
-    await leadPut({
+    await leadAdd({
       id,
       code,
       name:$("#cfName").value.trim(),
@@ -438,8 +439,7 @@ function bindEvents(){
   $("#lcBtn").onclick=async()=>{
     const ph=$("#lcPhone").value.trim(),cd=$("#lcCode").value.trim(),res=$("#lcResult");
     if(ph.replace(/\D/g,"").length!==12||cd.length!==4){res.innerHTML="<div class='lc-res warn'>Telefon raqamni to'liq va 4 xonali kodni kiriting.</div>";return;}
-    const leads=await leadAll();
-    const l=leads.find(x=>x.phone===ph&&x.code===cd);
+    const l=await leadCheck(ph,cd);
     if(!l){res.innerHTML="<div class='lc-res bad'>Bunday ariza topilmadi. Telefon va kodni tekshirib ko'ring.</div>";return;}
     if(l.reply){
       const dt=new Date(l.replyDate).toLocaleDateString("ru-RU",{day:"2-digit",month:"2-digit"})+" "+new Date(l.replyDate).toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"});
@@ -457,6 +457,7 @@ async function loadReviews(){
 (async function init(){
   paintIcons(document.body);
   PRODUCTS=await getProducts();
+  await syncSettings();
   await loadReviews();
   initTheme();
   initTicker();
@@ -471,3 +472,5 @@ async function loadReviews(){
   tickCountdown();setInterval(tickCountdown,1000);
   requestAnimationFrame(initReveal);
 })();
+
+window.addEventListener("unhandledrejection",e=>{console.error(e.reason);toast("Xatolik: "+((e.reason&&e.reason.message)||e.reason),true);});

@@ -1,5 +1,4 @@
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-const PASS="0813";
 let PRODUCTS=[], ORDERS=[], LEADS=[], REVIEWS=[], editingImg="", editingVid="";
 
 function toast(msg,err){
@@ -11,18 +10,21 @@ function toast(msg,err){
 }
 function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
 
-function checkGate(){
-  const ok=sessionStorage.getItem("tb_admin")==="1";
+async function checkGate(){
+  const {data}=await sb.auth.getSession();
+  const ok=!!(data&&data.session);
   $("#gate").classList.toggle("hide",ok);
   $("#app").classList.toggle("hide",!ok);
   return ok;
 }
 
 async function loadAll(){
+  await productsSeedIfEmpty();
   PRODUCTS=await getProducts();
   ORDERS=await orderAll();
   LEADS=await leadAll();
   REVIEWS=(await reviewAll()).filter(r=>!r.seed);
+  await syncSettings();
   renderStats();
   renderProds();
   renderOrders();
@@ -198,16 +200,16 @@ function resizeImage(file){
 (async function init(){
   paintIcons(document.body);
 
-  $("#gateForm").addEventListener("submit",e=>{
+  $("#gateForm").addEventListener("submit",async e=>{
     e.preventDefault();
-    const v=$("#gatePass").value.replace(/\s+/g,"");
-    if(v===PASS){sessionStorage.setItem("tb_admin","1");checkGate();loadAll();}
-    else toast("Kod xato!",true);
+    const r=await sb.auth.signInWithPassword({email:$("#gateEmail").value.trim(),password:$("#gatePass").value});
     $("#gatePass").value="";
+    if(r.error){toast("Email yoki parol xato!",true);return;}
+    if(await checkGate())await loadAll();
   });
-  $("#logoutBtn").onclick=()=>{sessionStorage.removeItem("tb_admin");location.reload();};
+  $("#logoutBtn").onclick=async()=>{await sb.auth.signOut();location.reload();};
 
-  if(checkGate())await loadAll();
+  if(await checkGate())await loadAll();
 
   $$(".ad-tab[data-tab]").forEach(b=>b.onclick=()=>{
     $$(".ad-tab[data-tab]").forEach(x=>x.classList.toggle("on",x===b));
@@ -255,8 +257,16 @@ function resizeImage(file){
     p.hue=+fd.get("hue")||210;
     p.desc=fd.get("desc").trim()||"";
     p.kind=p.kind||(p.cat==="kompyuter"?"pc":p.cat==="noutbuk"?"laptop":p.cat==="monitor"?"monitor":p.cat==="komponent"?"cpu":p.cat==="ofis"?"printer":"mouse");
-    p.img=editingImg;p.video=editingVid;
-    await saveProducts(PRODUCTS);
+    try{
+      p.img=await uploadMedia(editingImg,"img");
+      p.video=await uploadMedia(editingVid,"vid");
+      await productPut(p);
+    }catch(err){
+      console.error(err);
+      if(!idRaw)PRODUCTS=PRODUCTS.filter(x=>x!==p);
+      toast("Saqlashda xatolik: "+(err.message||err),true);
+      return;
+    }
     $("#pOverlay").classList.remove("show");
     toast(idRaw?"Mahsulot yangilandi":"Mahsulot qo'shildi");
     renderStats();renderProds();
@@ -278,8 +288,8 @@ function resizeImage(file){
     const pd=e.target.closest("[data-pdel]");
     if(pd){
       if(confirm("Rostdan ham o'chirilsinmi?")){
+        await productDel(+pd.dataset.pdel);
         PRODUCTS=PRODUCTS.filter(x=>x.id!=pd.dataset.pdel);
-        await saveProducts(PRODUCTS);
         toast("Mahsulot o'chirildi");renderStats();renderProds();
       }
       return;
@@ -344,7 +354,9 @@ function resizeImage(file){
     const st=e.target.closest("[data-status]");
     if(st){
       const o=ORDERS.find(x=>x.id===st.dataset.status);
-      if(o){o.status=st.value;await orderPut(o);toast("Holat: "+o.status);renderStats();renderOrders();}
+      if(o){o.status=st.value;await orderSetStatus(o.id,o.status);toast("Holat: "+o.status);renderStats();renderOrders();}
     }
   });
 })();
+
+window.addEventListener("unhandledrejection",e=>{console.error(e.reason);toast("Xatolik: "+((e.reason&&e.reason.message)||e.reason),true);});
